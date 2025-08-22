@@ -5,9 +5,10 @@ pipeline {
     REGISTRY = "docker.io/${DOCKERHUB_USERNAME}/ci-cd-projet"
   }
   stages {
-    stage('Checkout') { steps { checkout scm } }
+    stage('Récupération du code (GitHub)') 
+      { steps { checkout scm } }
 
-    stage('Set variables') {
+    stage('Définition des tags (branche - > tags)') {
       steps {
         script {
           if (env.BRANCH_NAME == 'dev') {
@@ -25,7 +26,7 @@ pipeline {
       steps { sh 'docker build -t $REGISTRY:build-$BRANCH_NAME-$BUILD_NUMBER .' }
     }
 
-    stage('Docker login & push') {
+    stage('Docker Hub') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
           sh '''
