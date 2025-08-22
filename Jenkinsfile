@@ -5,9 +5,10 @@ pipeline {
     REGISTRY = "docker.io/${DOCKERHUB_USERNAME}/ci-cd-projet"
   }
   stages {
-    stage('Checkout') { steps { checkout scm } }
+    stage('Récupération du code (GitHub)') 
+      { steps { checkout scm } }
 
-    stage('Set variables') {
+    stage('Définition des tags (branche - > tags)') {
       steps {
         script {
           if (env.BRANCH_NAME == 'dev') {
@@ -25,18 +26,21 @@ pipeline {
       steps { sh 'docker build -t $REGISTRY:build-$BRANCH_NAME-$BUILD_NUMBER .' }
     }
 
-    stage('Docker login & push') {
+    stage('Docker Hub') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
           sh '''
+            set -eu
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-            IFS=',' read -ra TAGS <<< "$IMAGE_TAGS"
-            for t in "${TAGS[@]}"; do
-              docker tag $REGISTRY:build-$BRANCH_NAME-$BUILD_NUMBER $REGISTRY:$t
-              docker push $REGISTRY:$t
+
+            TAGS=$(echo "$IMAGE_TAGS" | tr ',' ' ')
+            for t in $TAGS; do
+              docker tag "$REGISTRY:build-$BRANCH_NAME-$BUILD_NUMBER" "$REGISTRY:$t"
+              docker push "$REGISTRY:$t"
             done
+
             docker logout
-          '''
+            '''
         }
       }
     }
