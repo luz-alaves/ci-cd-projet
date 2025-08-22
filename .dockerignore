@@ -1,0 +1,7 @@
+.git
+.github
+wp-content/uploads
+*.sql
+*.zip
+docker-compose.yml
+
