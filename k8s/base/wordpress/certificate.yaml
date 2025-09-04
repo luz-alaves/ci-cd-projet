@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wordpress-tls
+  namespace: ns-projet
+spec:
+  secretName: wordpress-tls
+  issuerRef:
+    kind: ClusterIssuer
+    name: cert-manager-webhook-duckdns-production
+  dnsNames:
+  - miwp.duckdns.org
+

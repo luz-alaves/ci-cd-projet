@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: mysql-exporter
+  namespace: ns-projet
+  labels:
+    release: kube-prom  
+spec:
+  selector:
+    matchLabels:
+      app: mysql-exporter
+  endpoints:
+    - port: http
+      interval: 30s
+

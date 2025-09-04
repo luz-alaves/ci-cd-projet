@@ -1,0 +1,24 @@
+# k8s/infra/traefik-helmconfig.yaml
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    ports:
+      web:
+        redirectTo: websecure
+    persistence:
+      enabled: true
+      storageClass: local-path
+      accessMode: ReadWriteOnce
+      size: 1Gi
+    certificatesResolvers:
+      le:
+        acme:
+          email: ton.email@exemple.com
+          storage: /data/acme.json
+          httpChallenge:
+            entryPoint: web
+

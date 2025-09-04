@@ -1,0 +1,33 @@
+grafana:
+  enabled: true
+  adminPassword: "Admin123!"
+  grafana.ini:
+    server:
+      domain: grafana.miwp.duckdns.org
+      root_url: https://grafana.miwp.duckdns.org/
+      serve_from_sub_path: false
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+    hosts: [ "grafana.miwp.duckdns.org" ]
+    tls:
+      - secretName: tls-grafana-cert
+        hosts: [ "grafana.miwp.duckdns.org" ]
+prometheus:
+  prometheusSpec:
+    externalUrl: https://prometheus.miwp.duckdns.org/
+    routePrefix: /
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+    hosts:
+      - prometheus.miwp.duckdns.org
+    tls:
+      - secretName: tls-prometheus-cert
+        hosts:
+          - prometheus.miwp.duckdns.org
+
